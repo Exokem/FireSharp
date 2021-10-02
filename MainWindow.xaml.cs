@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Media;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -25,6 +26,7 @@ namespace SharpFire
 	public partial class MainWindow : Window
 	{
 		private static WaveOutEvent _audion = new WaveOutEvent();
+		private static bool _stateFixed = false;
 
 		public MainWindow()
 		{
@@ -38,14 +40,18 @@ namespace SharpFire
 			if (button == null)
 				return;
 
+			if (!_stateFixed)
+				return;
 
+			if (_audion.PlaybackState == PlaybackState.Playing)
+				_audion.Pause();
+			else
+				_audion.Play();
 		}
 
 		private void Import(object sender, RoutedEventArgs e)
 		{
-			OpenFileDialog dialog = new OpenFileDialog();
-
-			dialog.Filter = "MP3 Files (*.mp3)|*.mp3";
+			OpenFileDialog dialog = new() {Filter = "MP3 Files (*.mp3)|*.mp3"};
 
 			bool? result = dialog.ShowDialog();
 
@@ -57,7 +63,29 @@ namespace SharpFire
 
 				WaveStream fileStream = new AudioFileReader(dialog.FileName);
 
+				if (_audion.PlaybackState == PlaybackState.Playing)
+				{
+					_audion.Pause();
+					_audion.Stop();
+				}
+
 				_audion.Init(new WaveChannel32(fileStream));
+				_stateFixed = true;
+				
+
+				Thread progressManager = new Thread(() =>
+				{
+					while (true)
+					{
+						Debug.WriteLine($"{fileStream.CurrentTime.Ticks} / {fileStream.TotalTime.Ticks}");
+						Progress.Dispatcher.Invoke(() =>
+							Progress.Value = fileStream.CurrentTime.Divide(fileStream.TotalTime));
+						
+					}
+				});
+
+				progressManager.Start();
+
 				_audion.Play();
 			}
 		}
