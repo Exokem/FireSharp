@@ -15,28 +15,41 @@
     <Border Style="{DynamicResource Inset}">
         <Grid Style="{DynamicResource LightBackground}">
             <Grid.RowDefinitions>
-                <RowDefinition Height="0.3*"/>
-                <RowDefinition Height="0.7*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
             <Border Style="{DynamicResource Inset}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                 <Grid Style="{DynamicResource LightBackground}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                    </Grid.RowDefinitions>
+
+                    <Grid Margin="0 5 0 0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Column="1" Style="{DynamicResource PathControl}" Height="41"  Background="White" BorderThickness="0"/>
+                        
+                    </Grid>
+
                     <ProgressBar x:Name="Progress" 
+                                 Grid.Row="1"
                                  Margin="5" 
                                  Height="5"
                                  Maximum="1"
                                  Minimum="0"/>
-                    <!-- <Button Click="ChangeState"></Button> -->
                 </Grid>
             </Border>
-            <!-- <Button Grid.Row="1" Style="{DynamicResource DirectControl}"  -->
-            <!--         Content="Button"  -->
-            <!--         VerticalAlignment="Stretch"/> -->
             <Border Grid.Row="1" Style="{DynamicResource Inset}" Margin="5 0 5 5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                 <Grid Style="{DynamicResource LightBackground}" Margin="5">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="0.08*"/>
-                        <RowDefinition Height="0.92*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
                     <Grid>
@@ -45,20 +58,41 @@
                             <ColumnDefinition Width="0.7*"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        <Button FontFamily="{StaticResource Plex}" Click="Import">Import</Button>
-                        <Button Grid.Column="1" FontFamily="{StaticResource Plex}" Click="ChangeState">Play</Button>
+                        <Button FontFamily="{StaticResource Plex}" Style="{DynamicResource DirectControl}" Click="Import">Import</Button>
+                        <Button Grid.Column="1" FontFamily="{StaticResource Plex}" Style="{DynamicResource DirectControl}" BorderThickness="0 1 1 1" Click="ChangeState">Play</Button>
                     </Grid>
 
                     <Grid Grid.Row="1" Margin="0 5 0 0">
-                        <ListView>
-                            <ListView.View>
-                                <GridView>
-                                    <GridViewColumn/>
-                                </GridView>
-                            </ListView.View>
-                        </ListView>
+                        <Border Style="{DynamicResource Inset}" Margin="0">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"></RowDefinition>
+                                        <RowDefinition Height="Auto"></RowDefinition>
+                                        <RowDefinition Height="Auto"></RowDefinition>
+                                        <RowDefinition Height="Auto"></RowDefinition>
+                                    </Grid.RowDefinitions>
+
+                                    <Button Style="{DynamicResource DirectControl}" BorderThickness="0 0 1 1">Track</Button>
+                                    <Button Grid.Row="0" Grid.Column="1" Style="{DynamicResource DirectControl}" BorderThickness="0 0 1 1">Title</Button>
+                                    <Button Grid.Row="0" Grid.Column="2" Style="{DynamicResource DirectControl}" BorderThickness="0 0 1 1">Author</Button>
+                                    <Button Grid.Row="0" Grid.Column="3" Style="{DynamicResource DirectControl}" BorderThickness="0 0 0 1">Duration</Button>
+
+                                    <Button Grid.Row="1" Style="{DynamicResource IndirectControl}" BorderThickness="0 0 0 1">1</Button>
+                                    <Button Grid.Row="1" Grid.Column="1" Style="{DynamicResource IndirectControl}" BorderThickness="0 0 0 1">Sample</Button>
+                                    <Button Grid.Row="1" Grid.Column="2" Style="{DynamicResource IndirectControl}" BorderThickness="0 0 0 1">You</Button>
+                                    <Button Grid.Row="1" Grid.Column="3" Style="{DynamicResource IndirectControl}" BorderThickness="0 0 0 1">5:42</Button>
+                                </Grid>
+                            </ScrollViewer>
+                        </Border>
                     </Grid>
-                    <!-- <Button Click="ChangeState"></Button> -->
                 </Grid>
             </Border>
 
