@@ -114,6 +114,29 @@ namespace FireSharp
 			StateControlPath.Data = _statePaused ? _pause : _play;
 			_statePaused = !_statePaused;
 		}
+
+
+		private void NextEnter(object sender, MouseEventArgs e)
+		{
+			NextControlPath.Fill = Brushes.LightGray;
+			
+		}
+
+		private void NextExit(object sender, MouseEventArgs e)
+		{
+			NextControlPath.Fill = Brushes.Transparent;
+		}
+		
+		private void PrevEnter(object sender, MouseEventArgs e)
+		{
+			PrevControlPath.Fill = Brushes.LightGray;
+			
+		}
+
+		private void PrevExit(object sender, MouseEventArgs e)
+		{
+			PrevControlPath.Fill = Brushes.Transparent;
+		}
 	}
 
 	
