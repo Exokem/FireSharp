@@ -20,7 +20,7 @@ using System.Windows.Shapes;
 using Microsoft.Win32;
 using NAudio.Wave;
 
-namespace SharpFire
+namespace FireSharp
 {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
@@ -104,14 +104,14 @@ namespace SharpFire
 			StateControlPath.Fill = Brushes.Transparent;
 		}
 
-		private readonly Geometry Pause = Geometry.Parse("F0 M0,0 L6,0 L6,20 L0,20 ZM11,0 L17,0 L17,20 L11,20 Z");
-		private readonly Geometry Play = Geometry.Parse("F0 M0,0 L0,20 L17,10 Z");
+		private readonly Geometry _pause = Geometry.Parse("F0 M0,0 L6,0 L6,20 L0,20 ZM11,0 L17,0 L17,20 L11,20 Z");
+		private readonly Geometry _play = Geometry.Parse("F0 M0,0 L0,20 L17,10 Z");
 
 		private bool _statePaused = true;
 
 		private void StateControlSwitch(object sender, RoutedEventArgs e)
 		{
-			StateControlPath.Data = _statePaused ? Pause : Play;
+			StateControlPath.Data = _statePaused ? _pause : _play;
 			_statePaused = !_statePaused;
 		}
 	}
