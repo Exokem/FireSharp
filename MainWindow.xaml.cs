@@ -94,20 +94,12 @@ namespace FireSharp
 			}
 		}
 
-		private void StateControlEnter(object sender, MouseEventArgs e)
-		{
-			StateControlPath.Fill = Brushes.LightGray;
-		}
-
-		private void StateControlExit(object sender, MouseEventArgs e)
-		{
-			StateControlPath.Fill = Brushes.Transparent;
-		}
-
 		private readonly Geometry _pause = Geometry.Parse("F0 M0,0 L6,0 L6,20 L0,20 ZM11,0 L17,0 L17,20 L11,20 Z");
 		private readonly Geometry _play = Geometry.Parse("F0 M0,0 L0,20 L17,10 Z");
 
 		private bool _statePaused = true;
+
+		private static readonly Brush CALM_RED = new SolidColorBrush(Color.FromRgb(238, 18, 37));
 
 		private void StateControlSwitch(object sender, RoutedEventArgs e)
 		{
@@ -115,29 +107,46 @@ namespace FireSharp
 			_statePaused = !_statePaused;
 		}
 
+		private static void Recolor(Path path, MouseEventArgs e, Brush stroke, Brush fill = null)
+		{
+			path.Stroke = stroke;
+			path.Fill = fill ?? Brushes.Transparent;
+		}
+
+		private void StateControlEnter(object sender, MouseEventArgs e) => Recolor(StateControlPath, e, CALM_RED);
+		private void StateControlExit(object sender, MouseEventArgs e) => Recolor(StateControlPath, e, Brushes.DarkGray);
 
 		private void NextEnter(object sender, MouseEventArgs e)
 		{
-			NextControlPath.Fill = Brushes.LightGray;
-			
+			Recolor(NextControlPath, e, CALM_RED);
+		}
+		private void NextExit(object sender, MouseEventArgs e) => Recolor(NextControlPath, e, Brushes.DarkGray);
+
+		private void PrevEnter(object sender, MouseEventArgs e) => Recolor(PrevControlPath, e, CALM_RED);
+		private void PrevExit(object sender, MouseEventArgs e) => Recolor(PrevControlPath, e, Brushes.DarkGray);
+
+		private static void PathControlPress(Path path, object sender, MouseButtonEventArgs e)
+		{
+			Button button = sender as Button;
+
+			if (button == null)
+				return;
+
+			if (e.LeftButton == MouseButtonState.Pressed)
+				Recolor(path, e, CALM_RED, CALM_RED);
+			else if (button.IsMouseOver)
+				Recolor(path, e, CALM_RED);
+			else
+				Recolor(path, e, Brushes.DarkGray);
 		}
 
-		private void NextExit(object sender, MouseEventArgs e)
-		{
-			NextControlPath.Fill = Brushes.Transparent;
-		}
+		private void StateControlPress(object sender, MouseButtonEventArgs e) =>
+			PathControlPress(StateControlPath, sender, e);
+
+		private void NextControlPress(object sender, MouseButtonEventArgs e) =>
+			PathControlPress(NextControlPath, sender, e);
 		
-		private void PrevEnter(object sender, MouseEventArgs e)
-		{
-			PrevControlPath.Fill = Brushes.LightGray;
-			
-		}
-
-		private void PrevExit(object sender, MouseEventArgs e)
-		{
-			PrevControlPath.Fill = Brushes.Transparent;
-		}
+		private void PrevControlPress(object sender, MouseButtonEventArgs e) =>
+			PathControlPress(PrevControlPath, sender, e);
 	}
-
-	
 }
