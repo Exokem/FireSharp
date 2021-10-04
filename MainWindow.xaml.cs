@@ -35,25 +35,6 @@ namespace SharpFire
 		public MainWindow()
 		{
 			InitializeComponent();
-
-			DataContext = this;
-
-			// SizeChanged += (sender, args) =>
-			// {
-			// 	GridView view = XSelect.View as GridView;
-			//
-			// 	ScrollBarVisibility sv = (ScrollBarVisibility) XSelect.GetValue(ScrollViewer.VerticalScrollBarVisibilityProperty);
-			//
-			// 	var modifier = sv == ScrollBarVisibility.Visible ? SystemParameters.VerticalScrollBarWidth : 0;
-			//
-			// 	var workingWidth = XSelect.ActualWidth - modifier; // take into account vertical scrollbar
-			// 	var col1 = 0.50;
-			// 	var col2 = 0.50;
-			//
-			//
-			// 	view.Columns[0].Width = workingWidth * col1;
-			// 	view.Columns[1].Width = workingWidth * col2;
-			// };
 		}
 
 		private void ChangeState(object sender, RoutedEventArgs e)
@@ -113,14 +94,27 @@ namespace SharpFire
 			}
 		}
 
-		public static void AddClickHandler(Path instance, RoutedEventHandler handler)
+		private void StateControlEnter(object sender, MouseEventArgs e)
 		{
-			instance.AddHandler(ButtonBase.ClickEvent, handler);
+			StateControlPath.Fill = Brushes.LightGray;
 		}
 
-		public static void RemoveClickHandler(Path instance, RoutedEventHandler handler)
+		private void StateControlExit(object sender, MouseEventArgs e)
 		{
-			instance.RemoveHandler(ButtonBase.ClickEvent, handler);
+			StateControlPath.Fill = Brushes.Transparent;
+		}
+
+		private readonly Geometry Pause = Geometry.Parse("F0 M0,0 L6,0 L6,20 L0,20 ZM11,0 L17,0 L17,20 L11,20 Z");
+		private readonly Geometry Play = Geometry.Parse("F0 M0,0 L0,20 L17,10 Z");
+
+		private bool _statePaused = true;
+
+		private void StateControlSwitch(object sender, RoutedEventArgs e)
+		{
+			StateControlPath.Data = _statePaused ? Pause : Play;
+			_statePaused = !_statePaused;
 		}
 	}
+
+	
 }

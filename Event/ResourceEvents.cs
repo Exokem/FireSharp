@@ -15,8 +15,8 @@ namespace SharpFire.Event
 	{
 		private bool _paused = true;
 
-		private readonly Geometry Pause = Geometry.Parse("F0 M0,0 L12,0 L12,40 L0,40 ZM23,0 L35,0 L35,40 L23,40 Z");
-		private readonly Geometry Play = Geometry.Parse("F0 M0,0 L0,40 L35,20 Z");
+		private readonly Geometry Pause = Geometry.Parse("F0 M0,0 L6,0 L6,20 L0,20 ZM11,0 L17,0 L17,20 L11,20 Z");
+		private readonly Geometry Play = Geometry.Parse("F0 M0,0 L0,20 L17,10 Z");
 
 		void State(object sender, MouseButtonEventArgs e)
 		{
