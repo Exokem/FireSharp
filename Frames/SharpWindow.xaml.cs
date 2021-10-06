@@ -1,38 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Media;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Win32;
 using NAudio.Wave;
 
-namespace FireSharp
+namespace FireSharp.Frames
 {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
-	public partial class MainWindow : Window
+	public partial class SharpWindow : Window
 	{
 		private static WaveOutEvent _audion = new WaveOutEvent();
 		private static bool _stateFixed = false;
 
 		// public static ObservableCollection<Entry> Entries = new ObservableCollection<Entry>();
 
-		public MainWindow()
+		public SharpWindow()
 		{
 			InitializeComponent();
 		}
@@ -148,5 +137,14 @@ namespace FireSharp
 		
 		private void PrevControlPress(object sender, MouseButtonEventArgs e) =>
 			PathControlPress(PrevControlPath, sender, e);
+
+		private void Load(object sender, RoutedEventArgs e)
+		{
+		}
+
+		private void Eject(object sender, RoutedEventArgs e)
+		{
+			// throw new NotImplementedException();
+		}
 	}
 }

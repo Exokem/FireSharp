@@ -7,10 +7,18 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="MainWindow.xaml">
+    <Compile Update="Frames\LoadPrompt.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Frames\LoadPrompt.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="ResourceDictionary.xaml">
+    <Page Update="Frames\SharpWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Frames\ResourceDictionary.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

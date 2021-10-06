@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="NAudio" Version="2.0.1" />
+    <PackageReference Include="TagLibSharp" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -53,10 +54,6 @@
     <Resource Include="Internal\Typography\IBM_Plex_Sans\IBMPlexSans-ThinItalic.ttf">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="NewFolder\" />
   </ItemGroup>
 
 </Project>
