@@ -5,3 +5,5 @@ SharpFire.sln
 bin/
 obj/
 push.bat
+GlobalSuppressions.cs
+.editorconfig

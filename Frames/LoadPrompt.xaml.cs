@@ -19,24 +19,30 @@ namespace FireSharp.Frames
 	/// </summary>
 	public partial class LoadPrompt : Window
 	{
-		public LoadPrompt()
+		public LoadPrompt(SharpWindow root)
 		{
 			InitializeComponent();
+
+			_root = root;
 		}
+
+		private readonly SharpWindow _root;
 
 		private void StandardLoading(object sender, RoutedEventArgs e)
 		{
 			// open a single selector for casette files
 		}
-		
+
 		private void EmptyLoading(object sender, RoutedEventArgs e)
 		{
 			// quietly eject the current casette and initialize a new one (very simple)
 		}
-		
+
 		private void TrackInject(object sender, RoutedEventArgs e)
 		{
 			// open a multi selector for audio files
 		}
+
+		private void CancelOperation(object sender, RoutedEventArgs e) => Hide();
 	}
 }

@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:SharpFire"
         mc:Ignorable="d"
         Title="FireSharp" Height="450" Width="400"
+        WindowStartupLocation="CenterScreen"
         Background="Whitesmoke">
     <Window.Resources>
         <ResourceDictionary Source="ResourceDictionary.xaml"></ResourceDictionary>

@@ -16,15 +16,23 @@ namespace FireSharp.Frames
 	/// </summary>
 	public partial class SharpWindow : Window
 	{
-		private static WaveOutEvent _audion = new WaveOutEvent();
-		private static bool _stateFixed = false;
+		private static readonly WaveOutEvent _audion = new();
+		private static bool _stateFixed;
 
 		// public static ObservableCollection<Entry> Entries = new ObservableCollection<Entry>();
 
 		public SharpWindow()
 		{
 			InitializeComponent();
+
+			_loader = new LoadPrompt(this);
+
+			// Ensure loader closes with main window
+
+			Closed += (sender, args) => _loader.Close();
 		}
+
+		private readonly LoadPrompt _loader;
 
 		private void ChangeState(object sender, RoutedEventArgs e)
 		{
@@ -64,20 +72,19 @@ namespace FireSharp.Frames
 
 				_audion.Init(new WaveChannel32(fileStream));
 				_stateFixed = true;
-				
 
-				Thread progressManager = new Thread(() =>
-				{
-					while (true)
-					{
-						Debug.WriteLine($"{fileStream.CurrentTime.Ticks} / {fileStream.TotalTime.Ticks}");
-						Progress.Dispatcher.Invoke(() =>
-							Progress.Value = fileStream.CurrentTime.Divide(fileStream.TotalTime));
-						
-					}
-				});
-
-				progressManager.Start();
+				// Thread progressManager = new Thread(() =>
+				// {
+				// 	while (true)
+				// 	{
+				// 		Debug.WriteLine($"{fileStream.CurrentTime.Ticks} / {fileStream.TotalTime.Ticks}");
+				// 		Progress.Dispatcher.Invoke(() =>
+				// 			Progress.Value = fileStream.CurrentTime.Divide(fileStream.TotalTime));
+				//
+				// 	}
+				// });
+				//
+				// progressManager.Start();
 
 				_audion.Play();
 			}
@@ -109,6 +116,7 @@ namespace FireSharp.Frames
 		{
 			Recolor(NextControlPath, e, CALM_RED);
 		}
+
 		private void NextExit(object sender, MouseEventArgs e) => Recolor(NextControlPath, e, Brushes.DarkGray);
 
 		private void PrevEnter(object sender, MouseEventArgs e) => Recolor(PrevControlPath, e, CALM_RED);
@@ -129,17 +137,16 @@ namespace FireSharp.Frames
 				Recolor(path, e, Brushes.DarkGray);
 		}
 
-		private void StateControlPress(object sender, MouseButtonEventArgs e) =>
-			PathControlPress(StateControlPath, sender, e);
+		private void StateControlPress(object sender, MouseButtonEventArgs e) => PathControlPress(StateControlPath, sender, e);
 
-		private void NextControlPress(object sender, MouseButtonEventArgs e) =>
-			PathControlPress(NextControlPath, sender, e);
-		
-		private void PrevControlPress(object sender, MouseButtonEventArgs e) =>
-			PathControlPress(PrevControlPath, sender, e);
+		private void NextControlPress(object sender, MouseButtonEventArgs e) => PathControlPress(NextControlPath, sender, e);
+
+		private void PrevControlPress(object sender, MouseButtonEventArgs e) => PathControlPress(PrevControlPath, sender, e);
 
 		private void Load(object sender, RoutedEventArgs e)
 		{
+			_loader.Owner = this;
+			_loader.ShowDialog();
 		}
 
 		private void Eject(object sender, RoutedEventArgs e)

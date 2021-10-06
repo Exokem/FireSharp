@@ -5,7 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FireSharp.Frames"
         mc:Ignorable="d"
-        Title="Load Options" Height="Auto" Width="Auto"
+        Title="Load Options" Height="Auto" Width="200"
+        SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
         Background="Whitesmoke">
 
     <Window.Resources>
@@ -34,7 +37,7 @@
             </Border>
 
             <Border Grid.Row="1" Style="{DynamicResource Inset}" Margin="5 0 5 5">
-                <Button Margin="5" Style="{DynamicResource DirectControl}">Cancel</Button>
+                <Button Margin="5" Style="{DynamicResource DirectControl}" Click="CancelOperation">Cancel</Button>
             </Border>
         </Grid>
     </Border>
