@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows;
@@ -6,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using FireSharp.State;
 using Microsoft.Win32;
 using NAudio.Wave;
 
@@ -30,6 +32,57 @@ namespace FireSharp.Frames
 			// Ensure loader closes with main window
 
 			Closed += (sender, args) => _loader.Close();
+
+			State.State.AttachInstance(this);
+		}
+
+		public void UpdateTrackList(List<Track> stateSet)
+		{
+			// TrackList.ItemsSource = stateSet;
+
+			UIElement trackLabel = TrackGrid.Children[0];
+			UIElement titleLabel = TrackGrid.Children[1];
+			UIElement authorLabel = TrackGrid.Children[2];
+			UIElement durationLabel = TrackGrid.Children[3];
+
+			TrackGrid.RowDefinitions.Clear();
+			TrackGrid.Children.Clear();
+
+			TrackGrid.RowDefinitions.Add(new RowDefinition(){Height = GridLength.Auto});
+
+			TrackGrid.Children.Add(trackLabel);
+			TrackGrid.Children.Add(titleLabel);
+			TrackGrid.Children.Add(authorLabel);
+			TrackGrid.Children.Add(durationLabel);
+
+			Style buttonStyle = Resources["IndirectControl"] as Style;
+			Thickness borderThickness = new Thickness(0, 0, 0, 0.5);
+
+			foreach (Track track in stateSet)
+			{
+				TrackGrid.RowDefinitions.Add(new RowDefinition(){Height = GridLength.Auto});
+
+				Button index = new() {Content = $"{track.Index}", Style = buttonStyle, BorderThickness = borderThickness};
+				index.SetValue(Grid.RowProperty, track.Index);
+				index.SetValue(Grid.ColumnProperty, 0);
+
+				Button title = new() {Content = $"{track.Title}", Style = buttonStyle, BorderThickness = borderThickness};
+				Grid.SetRow(title, track.Index);
+				Grid.SetColumn(title, 1);
+
+				Button author = new() {Content = $"{track.Author}", Style = buttonStyle, BorderThickness = borderThickness};
+				Grid.SetRow(author, track.Index);
+				Grid.SetColumn(author, 2);
+
+				Button duration = new() {Content = $"{track.Duration}", Style = buttonStyle, BorderThickness = borderThickness};
+				Grid.SetRow(duration, track.Index);
+				Grid.SetColumn(duration, 3);
+
+				TrackGrid.Children.Add(index);
+				TrackGrid.Children.Add(title);
+				TrackGrid.Children.Add(author);
+				TrackGrid.Children.Add(duration);
+			}
 		}
 
 		private readonly LoadPrompt _loader;

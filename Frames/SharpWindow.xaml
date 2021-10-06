@@ -77,6 +77,10 @@
                                  Grid.Row="1"
                                  Margin="5" 
                                  Height="5"
+                                 BorderThickness="0.5"
+                                 BorderBrush="Gainsboro"
+                                 Background="WhiteSmoke"
+                                 Foreground="Red"
                                  Maximum="1"
                                  Minimum="0"/>
                 </Grid>
@@ -91,45 +95,76 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="5"></ColumnDefinition>
                             <ColumnDefinition Width="*"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <Button Style="{DynamicResource DirectControl}" 
-                                BorderThickness="1 1 0 1"
                                 Click="Load">Load</Button>
-                        <Button Grid.Column="1" 
+                        <Button Grid.Column="2" 
                                 Style="{DynamicResource DirectControl}" 
-                                BorderThickness="0 1 1 1"
                                 Click="Eject">Eject</Button>
                     </Grid>
 
                     <Grid Grid.Row="1" Margin="0 5 0 0">
                         <Border Style="{DynamicResource Inset}" Margin="0">
                             <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <!-- <DataGrid x:Name="TrackList" AutoGenerateColumns="False" -->
+                                <!--           Style="{DynamicResource CasetteGrid}" -->
+                                <!--           Foreground="{StaticResource Generic.Charcoal}" FontFamily="{StaticResource Plex}"> -->
+                                <!--      -->
+                                <!-- -->
+                                <!-- -->
+                                <!--     <DataGrid.Columns> -->
+                                <!--         <DataGridTextColumn Header="Track" Width="Auto" Binding="{Binding Index}"/> -->
+                                <!--         <DataGridTextColumn Header="Title" Width="*" Binding="{Binding Title}"/> -->
+                                <!--         <DataGridTextColumn Header="Author" Width="*" Binding="{Binding Author}"/> -->
+                                <!--         <DataGridTextColumn Header="Duration" Width="Auto" Binding="{Binding Duration}"/> -->
+                                <!--     </DataGrid.Columns> -->
+                                <!-- </DataGrid> -->
+
                                 <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-
                                     <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"></RowDefinition>
-                                        <RowDefinition Height="Auto"></RowDefinition>
-                                        <RowDefinition Height="Auto"></RowDefinition>
-                                        <RowDefinition Height="Auto"></RowDefinition>
+                                        <!-- <RowDefinition Height="Auto"></RowDefinition> -->
+                                        <RowDefinition Height="*"></RowDefinition>
                                     </Grid.RowDefinitions>
+                                
+                                    <!-- <Grid> -->
+                                    <!--     <Grid.ColumnDefinitions> -->
+                                    <!--         <ColumnDefinition Width="Auto"/> -->
+                                    <!--         <ColumnDefinition Width="*"/> -->
+                                    <!--         <ColumnDefinition Width="*"/> -->
+                                    <!--         <ColumnDefinition Width="Auto"/> -->
+                                    <!--     </Grid.ColumnDefinitions> -->
+                                    <!-- -->
+                                    <!--      -->
+                                    <!-- </Grid> -->
+                                
+                                    <Grid x:Name="TrackGrid" Grid.Row="1">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"></RowDefinition>
+                                            <RowDefinition Height="Auto"></RowDefinition>
+                                            <RowDefinition Height="Auto"></RowDefinition>
+                                            <RowDefinition Height="Auto"></RowDefinition>
+                                        </Grid.RowDefinitions>
+                                
+                                        <Button Style="{DynamicResource DirectControl}" BorderThickness="0 0 0 0.5">Track</Button>
+                                        <Button Grid.Row="0" Grid.Column="1" Style="{DynamicResource DirectControl}" BorderThickness="0 0 0 0.5">Title</Button>
+                                        <Button Grid.Row="0" Grid.Column="2" Style="{DynamicResource DirectControl}" BorderThickness="0 0 0 0.5">Author</Button>
+                                        <Button Grid.Row="0" Grid.Column="3" Style="{DynamicResource DirectControl}" BorderThickness="0 0 0 0.5">Duration</Button>
 
-                                    <Button Style="{DynamicResource DirectControl}" BorderThickness="0 0 0 1">Track</Button>
-                                    <Button Grid.Row="0" Grid.Column="1" Style="{DynamicResource DirectControl}" BorderThickness="0 0 0 1">Title</Button>
-                                    <Button Grid.Row="0" Grid.Column="2" Style="{DynamicResource DirectControl}" BorderThickness="0 0 0 1">Author</Button>
-                                    <Button Grid.Row="0" Grid.Column="3" Style="{DynamicResource DirectControl}" BorderThickness="0 0 0 1">Duration</Button>
-
-                                    <Button Grid.Row="1" Style="{DynamicResource IndirectControl}" BorderThickness="0 0 0 1">1</Button>
-                                    <Button Grid.Row="1" Grid.Column="1" Style="{DynamicResource IndirectControl}" BorderThickness="0 0 0 1">Sample</Button>
-                                    <Button Grid.Row="1" Grid.Column="2" Style="{DynamicResource IndirectControl}" BorderThickness="0 0 0 1">You</Button>
-                                    <Button Grid.Row="1" Grid.Column="3" Style="{DynamicResource IndirectControl}" BorderThickness="0 0 0 1">5:42</Button>
+                                        <!-- <Button Grid.Row="1" Style="{DynamicResource IndirectControl}" BorderThickness="0 0 0 0.5">1</Button> -->
+                                        <!-- <Button Grid.Row="1" Grid.Column="1" Style="{DynamicResource IndirectControl}" BorderThickness="0 0 0 0.5">Sample</Button> -->
+                                        <!-- <Button Grid.Row="1" Grid.Column="2" Style="{DynamicResource IndirectControl}" BorderThickness="0 0 0 0.5">You</Button> -->
+                                        <!-- <Button Grid.Row="1" Grid.Column="3" Style="{DynamicResource IndirectControl}" BorderThickness="0 0 0 0.5">5:42</Button> -->
+                                    </Grid>
                                 </Grid>
                             </ScrollViewer>
                         </Border>

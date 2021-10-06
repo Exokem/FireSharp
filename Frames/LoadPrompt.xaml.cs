@@ -31,6 +31,8 @@ namespace FireSharp.Frames
 		private void StandardLoading(object sender, RoutedEventArgs e)
 		{
 			// open a single selector for casette files
+
+
 		}
 
 		private void EmptyLoading(object sender, RoutedEventArgs e)
@@ -41,6 +43,8 @@ namespace FireSharp.Frames
 		private void TrackInject(object sender, RoutedEventArgs e)
 		{
 			// open a multi selector for audio files
+
+			State.DialogProvider.RequestAudioPaths();
 		}
 
 		private void CancelOperation(object sender, RoutedEventArgs e) => Hide();
