@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using FireSharp.State;
 
 namespace FireSharp.Frames
 {
@@ -32,14 +33,17 @@ namespace FireSharp.Frames
 		{
 			// open a single selector for casette files
 
-			State.DialogProvider.RequestCasetteLoadPath();
+			DialogProvider.RequestCasetteLoadPath();
 		}
 
 		private void EmptyLoading(object sender, RoutedEventArgs e)
 		{
 			// quietly eject the current casette and initialize a new one (very simple)
 
-			
+			if (DialogProvider.PromptSave())
+				State.State.EjectCasette();
+
+			State.State.LoadCasette(Casette.Empty());
 		}
 
 		private void TrackInject(object sender, RoutedEventArgs e)

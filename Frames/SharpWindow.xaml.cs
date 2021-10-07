@@ -32,6 +32,7 @@ namespace FireSharp.Frames
 			// Ensure loader closes with main window
 
 			Closed += (sender, args) => _loader.Close();
+			Closing += (sender, args) => State.State.SaveOnClose(args);
 
 			State.State.AttachInstance(this);
 		}
@@ -204,7 +205,8 @@ namespace FireSharp.Frames
 
 		private void Eject(object sender, RoutedEventArgs e)
 		{
-			State.DialogProvider.RequestCasetteSavePath();
+			if (DialogProvider.PromptSave())
+				State.State.EjectCasette();
 		}
 	}
 }

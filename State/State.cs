@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using FireSharp.Frames;
 using Microsoft.Win32;
 using File = System.IO.File;
@@ -29,6 +31,48 @@ namespace FireSharp.State
 			_attached = true;
 		}
 
+		internal enum CloseAction
+		{
+			SAVE, CANCEL, IGNORE
+		}
+
+		internal static CloseAction RequestSave()
+		{
+			MessageBoxResult result = MessageBox.Show(_instance,
+				"The current casette is unsaved. Save the current casette?", "Unsaved Casette",
+				MessageBoxButton.YesNoCancel);
+
+			if (result == MessageBoxResult.Yes)
+				return CloseAction.SAVE;
+			else if (result == MessageBoxResult.Cancel)
+				return CloseAction.CANCEL;
+			else return CloseAction.IGNORE;
+		}
+
+		internal static void SaveOnClose(CancelEventArgs eventArgs = null)
+		{
+			if (!Saved)
+			{
+				CloseAction result = RequestSave();
+
+				if (eventArgs != null && result == CloseAction.CANCEL)
+					eventArgs.Cancel = true;
+				else if (result == CloseAction.SAVE)
+				{
+					bool? saved = DialogProvider.RequestCasetteSavePath();
+
+					if (saved.HasValue && !saved.Value && eventArgs != null)
+						eventArgs.Cancel = true;
+				}
+			}
+		}
+
+		internal static void LoadCasette(Casette casette)
+		{
+			_casette = casette;
+			_instance.UpdateTrackList(_casette.Queue);
+		}
+
 		internal static void ReceiveAudioPaths(string[] audioPaths)
 		{
 			if (_casette == null)
@@ -40,13 +84,20 @@ namespace FireSharp.State
 
 		internal static void ReceiveCasettePath(string casettePath)
 		{
-			if (_casette != null && !_casette.Saved)
+			if (_casette is {Saved: false})
 			{
-				// Prompt to save 
+				switch (RequestSave())
+				{
+					case CloseAction.SAVE: DialogProvider.RequestCasetteSavePath();
+						break;
+					case CloseAction.CANCEL: return;
+				}
 			}
 
-			_casette = Casette.Import(casettePath);
-			_instance.UpdateTrackList(_casette.Queue);
+			else if (_casette != null && casettePath == _casette.Path)
+				return;
+
+			LoadCasette(Casette.Import(casettePath));
 		}
 
 		internal static void EjectCasette()
@@ -99,18 +150,39 @@ namespace FireSharp.State
 				State.ReceiveCasettePath(_loadCasetteDialog.FileName);
 		}
 
-		internal static void RequestCasetteSavePath()
+		internal static bool PromptSave()
+		{
+			if (State.Saved)
+				return true;
+
+			State.CloseAction action = State.RequestSave();
+
+			if (action == State.CloseAction.SAVE)
+			{
+				bool? result = RequestCasetteSavePath();
+				if (result.HasValue)
+					return result.Value;
+			}
+			else if (action == State.CloseAction.CANCEL)
+				return false;
+
+			return true;
+		}
+
+		internal static bool? RequestCasetteSavePath()
 		{
 			if (State.Saved)
 			{
 				State.EjectCasette();
-				return;
+				return false;
 			}
 
 			bool? result = _saveCasetteDialog.ShowDialog();
 
 			if (result.HasValue && result.Value)
 				State.SaveEjectedCasette(_saveCasetteDialog.FileName);
+
+			return result;
 		}
 	}
 
@@ -131,6 +203,7 @@ namespace FireSharp.State
 			Casette casette = new();
 
 			casette.ReceiveAudioPaths(File.ReadAllLines(path), true);
+			casette.Path = path;
 
 			return casette;
 		}
@@ -155,6 +228,7 @@ namespace FireSharp.State
 			Saved = importOperation;
 		}
 
+		public string Path { get; private set; }
 		public Track this[int ix] => Queue[ix];
 		public bool Saved { get; private set; }
 		internal List<Track> Queue { get; } = new List<Track>();
