@@ -32,12 +32,14 @@ namespace FireSharp.Frames
 		{
 			// open a single selector for casette files
 
-
+			State.DialogProvider.RequestCasetteLoadPath();
 		}
 
 		private void EmptyLoading(object sender, RoutedEventArgs e)
 		{
 			// quietly eject the current casette and initialize a new one (very simple)
+
+			
 		}
 
 		private void TrackInject(object sender, RoutedEventArgs e)

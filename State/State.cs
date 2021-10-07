@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -17,6 +18,8 @@ namespace FireSharp.State
 
 		private static bool _attached;
 
+		public static bool Saved => _casette == null || _casette.Saved;
+
 		public static void AttachInstance(SharpWindow instance)
 		{
 			if (_attached)
@@ -26,11 +29,6 @@ namespace FireSharp.State
 			_attached = true;
 		}
 
-		internal static void LoadCasette(string path)
-		{
-			// _casette = 
-		}
-
 		internal static void ReceiveAudioPaths(string[] audioPaths)
 		{
 			if (_casette == null)
@@ -38,15 +36,50 @@ namespace FireSharp.State
 
 			_casette.ReceiveAudioPaths(audioPaths);
 			_instance.UpdateTrackList(_casette.Queue);
-			// _instance.TrackList.ItemsSource = _casette.Queue;
-			// _instance.TrackList.UpdateLayout();
+		}
+
+		internal static void ReceiveCasettePath(string casettePath)
+		{
+			if (_casette != null && !_casette.Saved)
+			{
+				// Prompt to save 
+			}
+
+			_casette = Casette.Import(casettePath);
+			_instance.UpdateTrackList(_casette.Queue);
+		}
+
+		internal static void EjectCasette()
+		{
+			_casette = null;
+			_instance.UpdateTrackList(new List<Track>());
+		}
+
+		internal static void SaveEjectedCasette(string casettePath)
+		{
+			if (_casette == null)
+				throw new InvalidOperationException("Cannot save null casette");
+
+			if (File.Exists(casettePath))
+				File.Delete(casettePath);
+
+			FileStream saveStream = File.Create(casettePath);
+			StreamWriter saveWriter = new StreamWriter(saveStream);
+
+			foreach (Track track in _casette.Queue)
+				saveWriter.WriteLine(track.Path);
+
+			saveWriter.Dispose();
+
+			EjectCasette();
 		}
 	}
 
 	internal static class DialogProvider
 	{
 		private static readonly OpenFileDialog _audioDialog = new() {Filter = "MP3 Files (*.mp3)|*.mp3|M4A Files (*.m4a)|*.m4a"};
-		private static readonly SaveFileDialog _newCasetteDialog = new() {Filter = "FireSharp Casettes (*.cst)|*.cst"};
+		private static readonly SaveFileDialog _saveCasetteDialog = new() {Filter = "FireSharp Casettes (*.cst)|*.cst"};
+		private static readonly OpenFileDialog _loadCasetteDialog = new() {Filter = "FireSharp Casettes (*.cst)|*.cst"};
 
 #nullable enable
 		internal static void RequestAudioPaths()
@@ -56,6 +89,28 @@ namespace FireSharp.State
 
 			if (result.HasValue && result.Value)
 				State.ReceiveAudioPaths(_audioDialog.FileNames);
+		}
+
+		internal static void RequestCasetteLoadPath()
+		{
+			bool? result = _loadCasetteDialog.ShowDialog();
+
+			if (result.HasValue && result.Value)
+				State.ReceiveCasettePath(_loadCasetteDialog.FileName);
+		}
+
+		internal static void RequestCasetteSavePath()
+		{
+			if (State.Saved)
+			{
+				State.EjectCasette();
+				return;
+			}
+
+			bool? result = _saveCasetteDialog.ShowDialog();
+
+			if (result.HasValue && result.Value)
+				State.SaveEjectedCasette(_saveCasetteDialog.FileName);
 		}
 	}
 
@@ -75,14 +130,14 @@ namespace FireSharp.State
 		{
 			Casette casette = new();
 
-			casette.ReceiveAudioPaths(File.ReadAllLines(path));
+			casette.ReceiveAudioPaths(File.ReadAllLines(path), true);
 
 			return casette;
 		}
 
 		public static Casette Empty() => new Casette();
 
-		internal void ReceiveAudioPaths(string[] audioPaths)
+		internal void ReceiveAudioPaths(string[] audioPaths, bool importOperation = false)
 		{
 			if (audioPaths == null || audioPaths.Length == 0)
 				return;
@@ -97,7 +152,7 @@ namespace FireSharp.State
 				}
 			}
 
-			Saved = false;
+			Saved = importOperation;
 		}
 
 		public Track this[int ix] => Queue[ix];

@@ -204,7 +204,7 @@ namespace FireSharp.Frames
 
 		private void Eject(object sender, RoutedEventArgs e)
 		{
-			// throw new NotImplementedException();
+			State.DialogProvider.RequestCasetteSavePath();
 		}
 	}
 }
