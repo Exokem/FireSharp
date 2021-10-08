@@ -151,10 +151,15 @@ namespace FireSharp.Frames
 
 		private static readonly Brush CALM_RED = new SolidColorBrush(Color.FromRgb(238, 18, 37));
 
+		public void UpdateStateControlPath()
+		{
+			StateControlPath.Data = State.State.Paused || State.State.Stopped ? _play : _pause;
+		}
+
 		private void StateControlSwitch(object sender, RoutedEventArgs e)
 		{
 			State.State.PauseSwitch();
-			StateControlPath.Data = State.State.Paused ? _play : _pause;
+			UpdateStateControlPath();
 		}
 
 		private static void Recolor(Path path, MouseEventArgs e, Brush stroke, Brush fill = null)

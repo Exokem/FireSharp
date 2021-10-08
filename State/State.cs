@@ -21,13 +21,12 @@ namespace FireSharp.State
 		private static Casette _casette;
 		private static int _index = 0;
 		private static bool _killParallel;
+		private static double _progress = 0;
 
 		public static void AttachInstance(SharpWindow instance)
 		{
 			if (_instance != null)
 				throw new InvalidOperationException("Cannot attach multiple state instances");
-
-			// Thread parallelManager = new Thread(new ThreadStart(ParallelManagerStart));
 
 			CancellationTokenSource cancelSource = new();
 
@@ -40,15 +39,12 @@ namespace FireSharp.State
 
 				cancelSource.Cancel();
 				cancelSource.Dispose();
-
-				// parallelManager.Join();
 			};
 
 			ThreadPool.QueueUserWorkItem(new WaitCallback(ParallelManagerStart), cancelSource.Token);
-
-			// parallelManager.Start();
-			
 		}
+
+		private static void UpdateStateControl() => _instance.Dispatcher.Invoke(() => _instance.UpdateStateControlPath());
 
 		private static void ParallelManagerStart(object obj)
 		{
@@ -56,9 +52,32 @@ namespace FireSharp.State
 			{
 				if (_activeWaveStream != null)
 				{
-					double progress = _activeWaveStream.CurrentTime.Divide(_activeWaveStream.TotalTime);
+					_progress = _activeWaveStream.CurrentTime.Divide(_activeWaveStream.TotalTime);
 
-					_instance.Progress.Dispatcher.Invoke(() => _instance.Progress.Value = progress);
+					_instance.Progress.Dispatcher.Invoke(() => _instance.Progress.Value = _progress);
+
+					if (!Paused)
+					{
+						if (1.0D <= _progress)
+						{
+							Debug.WriteLine("Track playback concluded");
+
+							_index++;
+
+							if (LoadTrack())
+							{
+								_audion.Play();
+							}
+
+							else
+							{
+								_audion.Stop();
+							}
+							
+
+							UpdateStateControl();
+						}
+					}
 				}
 			}
 		}
@@ -67,55 +86,46 @@ namespace FireSharp.State
 
 		private static WaveStream _activeWaveStream;
 
-		public static bool Paused { get; private set; } = true;
-		public static bool Active { get; private set; } = false;
+		public static bool Paused => _audion.PlaybackState == PlaybackState.Paused;
+		public static bool Stopped => _audion.PlaybackState == PlaybackState.Stopped;
+		public static bool Playing => !Paused && !Stopped;
 
-		// PAUSED-INACTIVE : Play button clicked
-		// 
-		// :. Initialize new wavechannel and start playing track at INDEX -> UNPAUSED-ACTIVE
-		//
-		// UNPAUSED-ACTIVE
-		//
-		// :. Play (pause) button clicked : Pause playback -> PAUSED-ACTIVE
-		// 
-		// ANY
-		//
-		// :. 
-		//
+		private static bool Playable => _casette != null && _index < _casette.Tracks;
 
-		private static bool ReplayAllowed => _casette != null && _casette[_index] != null;
-
-		private static void RiftStream()
+		private static bool LoadTrack()
 		{
-			_activeWaveStream = new AudioFileReader(_casette[_index].Path);
-			_audion.Init(new WaveChannel32(_activeWaveStream));
-		}
-
-		public static bool PauseSwitch()
-		{
-			if (Paused && ReplayAllowed)
+			if (Playable)
 			{
-				if (!Active)
-				{
-					RiftStream();
-					Active = true;
-				}
-				
-				_audion.Play();
-				Paused = false;
-
+				_audion.Stop();
+				_activeWaveStream = new AudioFileReader(_casette[_index].Path);
+				_audion.Init(new WaveChannel32(_activeWaveStream));
 				return true;
 			}
 
-			else if (Active)
+			else if (_index != 0)
 			{
-				_audion.Pause();
-				Paused = true;
+				// Attempt to reset position to beginning
 
-				return true;
+				_index = 0;
+				bool reset = LoadTrack();
+
+				return false; // <--------------- RETURN reset TO LOOP
 			}
 
 			return false;
+		}
+
+		public static void PauseSwitch()
+		{
+			if (!Playing && Playable)
+			{
+				_audion.Play();
+			}
+
+			else 
+			{
+				_audion.Pause();
+			}
 		}
 
 		internal enum CloseAction
@@ -158,6 +168,8 @@ namespace FireSharp.State
 		{
 			_casette = casette;
 			_instance.UpdateTrackList(_casette.Queue);
+			if (!Playing)
+				LoadTrack();
 		}
 
 		internal static void ReceiveAudioPaths(string[] audioPaths)
@@ -166,7 +178,7 @@ namespace FireSharp.State
 				_casette = Casette.Empty();
 
 			_casette.ReceiveAudioPaths(audioPaths);
-			_instance.UpdateTrackList(_casette.Queue);
+			LoadCasette(_casette);
 		}
 
 		internal static void ReceiveCasettePath(string casettePath)
