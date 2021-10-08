@@ -39,8 +39,10 @@
                                 MouseEnter="PrevEnter" 
                                 MouseLeave="PrevExit"
                                 PreviewMouseDown="PrevControlPress"
-                                PreviewMouseUp="PrevControlPress">
-                            <Path Stroke="DarkGray" x:Name="PrevControlPath"
+                                PreviewMouseUp="PrevControlPress"
+                                Click="PrevControlClick">
+                            <Path Stroke="DimGray" x:Name="PrevControlPath"
+                                  StrokeThickness="0.5"
                                   Data="M8,5 L0,10 L8,15 Z
                                   M16,0 V20 L10.75,16.5 V3.49999 L16,0 Z"/>
                         </Button>
@@ -53,7 +55,8 @@
                                 PreviewMouseDown="StateControlPress"
                                 PreviewMouseUp="StateControlPress"
                                 Click="StateControlSwitch">
-                            <Path Stroke="DarkGray" x:Name="StateControlPath" 
+                            <Path Stroke="DimGray" x:Name="StateControlPath" 
+                                  StrokeThickness="0.5"
                                   Data="F0 M0,0 L0,20 L17,10 Z"/>
                         </Button>
 
@@ -63,8 +66,10 @@
                                 MouseEnter="NextEnter" 
                                 MouseLeave="NextExit"
                                 PreviewMouseDown="NextControlPress"
-                                PreviewMouseUp="NextControlPress">
-                            <Path Stroke="DarkGray" x:Name="NextControlPath"
+                                PreviewMouseUp="NextControlPress"
+                                Click="NextControlClick">
+                            <Path Stroke="DimGray" x:Name="NextControlPath"
+                                  StrokeThickness="0.5"
                                   Data="M0,0 V20 L5.25,16.5 V3.49999 L0,0 Z 
                                   M8,5 L16,10 L8,15 Z"/>
                         </Button>

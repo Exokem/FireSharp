@@ -213,5 +213,9 @@ namespace FireSharp.Frames
 			if (DialogProvider.PromptSave())
 				State.State.EjectCasette();
 		}
+
+		private void PrevControlClick(object sender, RoutedEventArgs e) => State.State.TrackSwitch(false);
+
+		private void NextControlClick(object sender, RoutedEventArgs e) => State.State.TrackSwitch();
 	}
 }

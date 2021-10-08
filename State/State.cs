@@ -90,7 +90,7 @@ namespace FireSharp.State
 		public static bool Stopped => _audion.PlaybackState == PlaybackState.Stopped;
 		public static bool Playing => !Paused && !Stopped;
 
-		private static bool Playable => _casette != null && _index < _casette.Tracks;
+		private static bool Playable => _casette != null && 0 <= _index && _index < _casette.Tracks;
 
 		private static bool LoadTrack()
 		{
@@ -115,16 +115,45 @@ namespace FireSharp.State
 			return false;
 		}
 
-		public static void PauseSwitch()
+		private static void CheckedPlay()
 		{
-			if (!Playing && Playable)
+			if (Playable)
 			{
 				_audion.Play();
+			}
+		}
+
+		public static void PauseSwitch()
+		{
+			if (!Playing)
+			{
+				CheckedPlay();
 			}
 
 			else 
 			{
 				_audion.Pause();
+			}
+		}
+
+		public static void TrackSwitch(bool next = true)
+		{
+			if (next)
+			{
+				// skip to next track
+
+				_index++;
+				LoadTrack();
+				CheckedPlay();
+			}
+
+			else
+			{
+				// revert to previous track
+
+				_index--;
+				LoadTrack();
+				CheckedPlay();
 			}
 		}
 
