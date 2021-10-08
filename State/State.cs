@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using FireSharp.Frames;
@@ -19,13 +20,47 @@ namespace FireSharp.State
 		private static SharpWindow _instance = null;
 		private static Casette _casette;
 		private static int _index = 0;
+		private static bool _killParallel;
 
 		public static void AttachInstance(SharpWindow instance)
 		{
 			if (_instance != null)
 				throw new InvalidOperationException("Cannot attach multiple state instances");
 
+			// Thread parallelManager = new Thread(new ThreadStart(ParallelManagerStart));
+
+			CancellationTokenSource cancelSource = new();
+
 			_instance = instance;
+			_instance.Closing += (sender, args) =>
+			{
+				_killParallel = true;
+				_audion.Stop();
+				_audion.Dispose();
+
+				cancelSource.Cancel();
+				cancelSource.Dispose();
+
+				// parallelManager.Join();
+			};
+
+			ThreadPool.QueueUserWorkItem(new WaitCallback(ParallelManagerStart), cancelSource.Token);
+
+			// parallelManager.Start();
+			
+		}
+
+		private static void ParallelManagerStart(object obj)
+		{
+			while (!_killParallel)
+			{
+				if (_activeWaveStream != null)
+				{
+					double progress = _activeWaveStream.CurrentTime.Divide(_activeWaveStream.TotalTime);
+
+					_instance.Progress.Dispatcher.Invoke(() => _instance.Progress.Value = progress);
+				}
+			}
 		}
 
 		private static readonly WaveOutEvent _audion = new();
