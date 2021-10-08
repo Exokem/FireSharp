@@ -86,6 +86,22 @@ namespace FireSharp.Frames
 			}
 		}
 
+		public void UpdateTitle(string title)
+		{
+			TitleLabel.Content = title;
+		}
+
+		public void UpdateElapsedTime(string elapsed, string duration)
+		{
+			ElapsedLabel.Content = elapsed;
+			DurationLabel.Content = duration;
+		}
+
+		public void UpdateProgress(double progress)
+		{
+			Progress.Value = progress;
+		}
+
 		private readonly LoadPrompt _loader;
 
 		private void ChangeState(object sender, RoutedEventArgs e)
@@ -169,17 +185,17 @@ namespace FireSharp.Frames
 		}
 
 		private void StateControlEnter(object sender, MouseEventArgs e) => Recolor(StateControlPath, e, CALM_RED);
-		private void StateControlExit(object sender, MouseEventArgs e) => Recolor(StateControlPath, e, Brushes.DarkGray);
+		private void StateControlExit(object sender, MouseEventArgs e) => Recolor(StateControlPath, e, Brushes.DimGray);
 
 		private void NextEnter(object sender, MouseEventArgs e)
 		{
 			Recolor(NextControlPath, e, CALM_RED);
 		}
 
-		private void NextExit(object sender, MouseEventArgs e) => Recolor(NextControlPath, e, Brushes.DarkGray);
+		private void NextExit(object sender, MouseEventArgs e) => Recolor(NextControlPath, e, Brushes.DimGray);
 
 		private void PrevEnter(object sender, MouseEventArgs e) => Recolor(PrevControlPath, e, CALM_RED);
-		private void PrevExit(object sender, MouseEventArgs e) => Recolor(PrevControlPath, e, Brushes.DarkGray);
+		private void PrevExit(object sender, MouseEventArgs e) => Recolor(PrevControlPath, e, Brushes.DimGray);
 
 		private static void PathControlPress(Path path, object sender, MouseButtonEventArgs e)
 		{
@@ -193,7 +209,7 @@ namespace FireSharp.Frames
 			else if (button.IsMouseOver)
 				Recolor(path, e, CALM_RED);
 			else
-				Recolor(path, e, Brushes.DarkGray);
+				Recolor(path, e, Brushes.DimGray);
 		}
 
 		private void StateControlPress(object sender, MouseButtonEventArgs e) => PathControlPress(StateControlPath, sender, e);

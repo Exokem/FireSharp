@@ -16,17 +16,32 @@
         <Grid Style="{DynamicResource LightBackground}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Border Style="{DynamicResource Inset}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <Border Style="{DynamicResource Inset}" 
+                    VerticalAlignment="Stretch" 
+                    HorizontalAlignment="Stretch"
+                    Margin="5 5 5 0"
+                    >
+                <Label HorizontalAlignment="Center"
+                       x:Name="TitleLabel" Content="No Track"
+                       FontFamily="{StaticResource Plex}"
+                       Padding="5"
+                       VerticalAlignment="Center"
+                       FontSize="12"
+                />
+            </Border>
+
+            <Border Grid.Row="1" Style="{DynamicResource Inset}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                 <Grid Style="{DynamicResource LightBackground}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"></RowDefinition>
                         <RowDefinition Height="Auto"></RowDefinition>
                     </Grid.RowDefinitions>
 
-                    <Grid Margin="0 5 0 0" HorizontalAlignment="Center">
+                    <Grid Grid.Row="0" Margin="0 5 0 0" HorizontalAlignment="Center">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
@@ -74,23 +89,45 @@
                                   M8,5 L16,10 L8,15 Z"/>
                         </Button>
 
-                        
+                    </Grid>
+    
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.17*"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="0.17*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
 
+                        <Label Grid.Column="0" HorizontalAlignment="Center"
+                               x:Name="ElapsedLabel" Content="0:00"
+                               FontFamily="{StaticResource Plex}"
+                               Padding="0"
+                               VerticalAlignment="Center"
+                               FontSize="10"
+                               />
+
+                        <ProgressBar x:Name="Progress" Grid.Column="1"
+                                     Margin="5" 
+                                     Height="5"
+                                     BorderThickness="0.5"
+                                     BorderBrush="Gainsboro"
+                                     Background="WhiteSmoke" 
+                                     Foreground="Red"
+                                     Maximum="1" Minimum="0"/>
+
+                        <Label Grid.Column="2" HorizontalAlignment="Center"
+                               x:Name="DurationLabel" Content="0:00" 
+                               FontFamily="{StaticResource Plex}"
+                               Padding="0"
+                               VerticalAlignment="Center"
+                               FontSize="10"
+                               />
                     </Grid>
 
-                    <ProgressBar x:Name="Progress" 
-                                 Grid.Row="1"
-                                 Margin="5" 
-                                 Height="5"
-                                 BorderThickness="0.5"
-                                 BorderBrush="Gainsboro"
-                                 Background="WhiteSmoke"
-                                 Foreground="Red"
-                                 Maximum="1"
-                                 Minimum="0"/>
+                    
                 </Grid>
             </Border>
-            <Border Grid.Row="1" Style="{DynamicResource Inset}" Margin="5 0 5 5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <Border Grid.Row="2" Style="{DynamicResource Inset}" Margin="5 0 5 5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                 <Grid Style="{DynamicResource LightBackground}" Margin="5">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>

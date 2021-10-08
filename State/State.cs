@@ -46,18 +46,60 @@ namespace FireSharp.State
 
 		private static void UpdateStateControl() => _instance.Dispatcher.Invoke(() => _instance.UpdateStateControlPath());
 
+		private static readonly TimeSpan ELAPSED = new TimeSpan();
+
+		private static string SecondsToString(long seconds)
+		{
+			long minutes = seconds / 60;
+			long hours = minutes / 60;
+
+			minutes -= hours * 60;
+			seconds -= minutes * 60;
+
+			StringBuilder builder = new StringBuilder();
+
+			if (hours != 0)
+			{
+				string minuteString = minutes < 10 ? $"0{minutes}" : $"{minutes}";
+
+				builder.Append($"{hours}:{minuteString}");
+			}
+			else
+			{
+				builder.Append($"{minutes}:");
+			}
+
+			builder.Append(seconds < 10 ? $"0{seconds}" : $"{seconds}");
+
+			return builder.ToString();
+		}
+
+		private static long _lastSeconds = 0;
+
 		private static void ParallelManagerStart(object obj)
 		{
 			while (!_killParallel)
 			{
 				if (_activeWaveStream != null)
 				{
+					Track track = _casette[_index];
 					_progress = _activeWaveStream.CurrentTime.Divide(_activeWaveStream.TotalTime);
 
-					_instance.Progress.Dispatcher.Invoke(() => _instance.Progress.Value = _progress);
+					long seconds = (long) track.Duration.TotalSeconds;
+					long currentSeconds = (long) (_progress * seconds);
+
+					if (currentSeconds != _lastSeconds)
+					{
+						Debug.WriteLine("Updating time display");
+						_instance.Progress.Dispatcher.Invoke(() => _instance.UpdateElapsedTime(SecondsToString(currentSeconds), SecondsToString(seconds)));
+					}
+
+					_lastSeconds = currentSeconds;
 
 					if (!Paused)
 					{
+						_instance.Progress.Dispatcher.Invoke(() => _instance.UpdateProgress(_progress));
+
 						if (1.0D <= _progress)
 						{
 							Debug.WriteLine("Track playback concluded");
@@ -99,6 +141,7 @@ namespace FireSharp.State
 				_audion.Stop();
 				_activeWaveStream = new AudioFileReader(_casette[_index].Path);
 				_audion.Init(new WaveChannel32(_activeWaveStream));
+				_instance.Progress.Dispatcher.Invoke(() => _instance.UpdateTitle(_casette[_index].Title));
 				return true;
 			}
 
