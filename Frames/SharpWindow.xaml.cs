@@ -153,8 +153,8 @@ namespace FireSharp.Frames
 
 		private void StateControlSwitch(object sender, RoutedEventArgs e)
 		{
-			StateControlPath.Data = _statePaused ? _pause : _play;
-			_statePaused = !_statePaused;
+			State.State.PauseSwitch();
+			StateControlPath.Data = State.State.Paused ? _play : _pause;
 		}
 
 		private static void Recolor(Path path, MouseEventArgs e, Brush stroke, Brush fill = null)

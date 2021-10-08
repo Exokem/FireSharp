@@ -9,26 +9,78 @@ using System.Threading.Tasks;
 using System.Windows;
 using FireSharp.Frames;
 using Microsoft.Win32;
+using NAudio.Wave;
 using File = System.IO.File;
 
 namespace FireSharp.State
 {
 	public static class State
 	{
+		private static SharpWindow _instance = null;
 		private static Casette _casette;
-		private static SharpWindow _instance;
-
-		private static bool _attached;
-
-		public static bool Saved => _casette == null || _casette.Saved;
+		private static int _index = 0;
 
 		public static void AttachInstance(SharpWindow instance)
 		{
-			if (_attached)
+			if (_instance != null)
 				throw new InvalidOperationException("Cannot attach multiple state instances");
 
 			_instance = instance;
-			_attached = true;
+		}
+
+		private static readonly WaveOutEvent _audion = new();
+
+		private static WaveStream _activeWaveStream;
+
+		public static bool Paused { get; private set; } = true;
+		public static bool Active { get; private set; } = false;
+
+		// PAUSED-INACTIVE : Play button clicked
+		// 
+		// :. Initialize new wavechannel and start playing track at INDEX -> UNPAUSED-ACTIVE
+		//
+		// UNPAUSED-ACTIVE
+		//
+		// :. Play (pause) button clicked : Pause playback -> PAUSED-ACTIVE
+		// 
+		// ANY
+		//
+		// :. 
+		//
+
+		private static bool ReplayAllowed => _casette != null && _casette[_index] != null;
+
+		private static void RiftStream()
+		{
+			_activeWaveStream = new AudioFileReader(_casette[_index].Path);
+			_audion.Init(new WaveChannel32(_activeWaveStream));
+		}
+
+		public static bool PauseSwitch()
+		{
+			if (Paused && ReplayAllowed)
+			{
+				if (!Active)
+				{
+					RiftStream();
+					Active = true;
+				}
+				
+				_audion.Play();
+				Paused = false;
+
+				return true;
+			}
+
+			else if (Active)
+			{
+				_audion.Pause();
+				Paused = true;
+
+				return true;
+			}
+
+			return false;
 		}
 
 		internal enum CloseAction
@@ -124,6 +176,8 @@ namespace FireSharp.State
 
 			EjectCasette();
 		}
+
+		public static bool Saved => _casette == null || _casette.Saved;
 	}
 
 	internal static class DialogProvider
@@ -190,14 +244,9 @@ namespace FireSharp.State
 	{
 		private Casette()
 		{
-
+			Path = "";
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="path">The (selected) absolute path to the casette file to be imported.</param>
-		/// <returns></returns>
 		public static Casette Import(string path)
 		{
 			Casette casette = new();
@@ -228,9 +277,12 @@ namespace FireSharp.State
 			Saved = importOperation;
 		}
 
-		public string Path { get; private set; }
 		public Track this[int ix] => Queue[ix];
+
+		public string Path { get; private set; }
 		public bool Saved { get; private set; }
+		public int Tracks => Queue.Count;
+
 		internal List<Track> Queue { get; } = new List<Track>();
 	}
 
